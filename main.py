@@ -12,7 +12,11 @@ app.config["DEBUG"] = True
 
 @app.route('/path', methods=['GET'])
 def index():
-    return render_template('./index.html')
+    fileData = 0
+    with open('test.json', 'r') as f:
+        fileData = json.load(f)
+        f.close()
+    return render_template('./index.html', data=fileData)
 
 
 @app.route('/route', methods=['POST'])
@@ -30,6 +34,12 @@ def route():
     path, runs = finder.find_path(start, end, grid)
     print(grid.grid_str(path=path, start=start, end=end))
     return json.dumps(path)
+
+
+@app.route('/get-grid', methods=['POST'])
+def getGrid():
+    data = request.stream.read()
+    return json.dumps(create_matrix(json.loads(data)))
 
 
 @app.route('/', methods=['POST'])
